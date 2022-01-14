@@ -1,6 +1,7 @@
 package com.asimodabas.crypto_tracking.service
 
 import com.asimodabas.crypto_tracking.model.CryptoModel
+import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.GET
 
@@ -16,7 +17,6 @@ interface CryptoAPI {
 
     @GET("asimodabas/Crypto-Tracking/master/crypto.json")
 
-    fun getData():Call<List<CryptoModel>>
-
-
+    //fun getData():Call<List<CryptoModel>>
+    fun getData() : Observable<List<CryptoModel>>
 }

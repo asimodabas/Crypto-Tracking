@@ -10,18 +10,25 @@ import com.asimodabas.crypto_tracking.R
 import com.asimodabas.crypto_tracking.adapter.RecyclerViewAdapter
 import com.asimodabas.crypto_tracking.model.CryptoModel
 import com.asimodabas.crypto_tracking.service.CryptoAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(),RecyclerViewAdapter.Listener {
+class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
 
     private val BASE_URL = "https://raw.githubusercontent.com/"
     private var cryptoModels: ArrayList<CryptoModel>? = null
     private var recyclerViewAdapter: RecyclerViewAdapter? = null
+
+    //Disposable
+    private var compositeDisposable: CompositeDisposable? = null
 
 
 
@@ -37,9 +44,10 @@ class MainActivity : AppCompatActivity(),RecyclerViewAdapter.Listener {
         //-----------------
         //https://raw.githubusercontent.com/asimodabas/Crypto-Tracking/master/crypto.json
 
+        compositeDisposable = CompositeDisposable()
 
         //RecyclerView
-        var layoutManager : RecyclerView.LayoutManager = LinearLayoutManager(this)
+        var layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
 
 
@@ -48,15 +56,23 @@ class MainActivity : AppCompatActivity(),RecyclerViewAdapter.Listener {
 
     fun loadData() {
 
-        val retrofit =
-            Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .build()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build().create(CryptoAPI::class.java)
+
+
+        compositeDisposable?.add(retrofit.getData()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::handleResponse))
+
+
+        /*
 
         val service = retrofit.create(CryptoAPI::class.java)
         val call = service.getData()
-
 
         call.enqueue(object : Callback<List<CryptoModel>> {
 
@@ -69,17 +85,17 @@ class MainActivity : AppCompatActivity(),RecyclerViewAdapter.Listener {
                         cryptoModels = ArrayList(it)
 
                         cryptoModels.let {
-                            recyclerViewAdapter = RecyclerViewAdapter(it!!,this@MainActivity)
+                            recyclerViewAdapter = RecyclerViewAdapter(it!!, this@MainActivity)
                             recyclerView.adapter = recyclerViewAdapter
                         }
-                        /*
+
 
                         for (cryptoModel: CryptoModel in cryptoModels!!) {
                             println(cryptoModel.currency)
                             println(cryptoModel.price)
                         }
 
-                         */
+
 
                     }
                 }
@@ -90,10 +106,16 @@ class MainActivity : AppCompatActivity(),RecyclerViewAdapter.Listener {
             }
 
         })
+
+        */
+    }
+
+    fun handleResponse(cryptoList : List<CryptoModel>){
+
     }
 
     override fun onItemClick(cryptoModel: CryptoModel) {
-        Toast.makeText(this,"Clicked : ${cryptoModel.currency}",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Clicked : ${cryptoModel.currency}", Toast.LENGTH_SHORT).show()
     }
 
 }
