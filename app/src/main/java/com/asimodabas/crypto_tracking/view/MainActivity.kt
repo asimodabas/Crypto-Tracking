@@ -82,8 +82,8 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        cryptoModels = ArrayList(it)
 
+                        cryptoModels = ArrayList(it)
                         cryptoModels.let {
                             recyclerViewAdapter = RecyclerViewAdapter(it!!, this@MainActivity)
                             recyclerView.adapter = recyclerViewAdapter
@@ -112,10 +112,22 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
 
     fun handleResponse(cryptoList : List<CryptoModel>){
 
+        cryptoModels = ArrayList(cryptoList)
+
+        cryptoModels.let {
+            recyclerViewAdapter = RecyclerViewAdapter(it!!, this@MainActivity)
+            recyclerView.adapter = recyclerViewAdapter
+        }
+
     }
 
     override fun onItemClick(cryptoModel: CryptoModel) {
         Toast.makeText(this, "Clicked : ${cryptoModel.currency}", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onDestroy() {
+
+        super.onDestroy()
+        compositeDisposable?.clear()
+    }
 }
