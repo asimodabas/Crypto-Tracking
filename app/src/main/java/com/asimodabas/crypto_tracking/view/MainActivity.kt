@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
     private var compositeDisposable: CompositeDisposable? = null
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -57,16 +56,18 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
     fun loadData() {
 
         val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build().create(CryptoAPI::class.java)
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build().create(CryptoAPI::class.java)
 
 
-        compositeDisposable?.add(retrofit.getData()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::handleResponse))
+        compositeDisposable?.add(
+            retrofit.getData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResponse)
+        )
 
 
         /*
@@ -110,7 +111,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.Listener {
         */
     }
 
-    fun handleResponse(cryptoList : List<CryptoModel>){
+    fun handleResponse(cryptoList: List<CryptoModel>) {
 
         cryptoModels = ArrayList(cryptoList)
 

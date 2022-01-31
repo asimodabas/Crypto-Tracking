@@ -10,4 +10,4 @@ data class CryptoModel(
     //@SerializedName("price")
     val price: String
 
-    )
+)

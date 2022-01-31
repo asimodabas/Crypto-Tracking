@@ -18,5 +18,5 @@ interface CryptoAPI {
     @GET("asimodabas/Crypto-Tracking/master/crypto.json")
 
     //fun getData():Call<List<CryptoModel>>
-    fun getData() : Observable<List<CryptoModel>>
+    fun getData(): Observable<List<CryptoModel>>
 }

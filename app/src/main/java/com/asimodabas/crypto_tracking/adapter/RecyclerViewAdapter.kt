@@ -24,7 +24,12 @@ class RecyclerViewAdapter(
 
     class RowHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(cryptoModel: CryptoModel, colors: Array<String>, position: Int,listener : Listener) {
+        fun bind(
+            cryptoModel: CryptoModel,
+            colors: Array<String>,
+            position: Int,
+            listener: Listener
+        ) {
 
             itemView.setOnClickListener {
                 listener.onItemClick(cryptoModel)
@@ -46,7 +51,7 @@ class RecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RowHolder, position: Int) {
 
-        holder.bind(cryptoList[position],colors, position, listener)
+        holder.bind(cryptoList[position], colors, position, listener)
     }
 
     override fun getItemCount(): Int {
